@@ -1,0 +1,8 @@
+C:\Users\root\Desktop\mserverx\mserverx\bin\Release\mserverx.exe
+C:\Users\root\Desktop\mserverx\mserverx\bin\Release\mserverx.pdb
+C:\Users\root\Desktop\mserverx\mserverx\bin\Release\mserverx.xml
+C:\Users\root\Desktop\mserverx\mserverx\obj\x86\Release\ConsoleApplication1.Resources.resources
+C:\Users\root\Desktop\mserverx\mserverx\obj\x86\Release\mserverx.vbproj.GenerateResource.Cache
+C:\Users\root\Desktop\mserverx\mserverx\obj\x86\Release\mserverx.exe
+C:\Users\root\Desktop\mserverx\mserverx\obj\x86\Release\mserverx.xml
+C:\Users\root\Desktop\mserverx\mserverx\obj\x86\Release\mserverx.pdb

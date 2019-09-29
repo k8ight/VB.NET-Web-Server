@@ -1,6 +1,7 @@
-# VB.NET-Web-Server
+# VB.NET-Web-Server with PHP support
 A simple http server based on VB.net
-
+supprt of PHP added  in version 2.0
+php version is 7.3.9 with GPL license
 
 
 server can be configured from conf\config.ini 

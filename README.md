@@ -21,7 +21,7 @@ ipbind=0.0.0.0
 
 dir=\www\
 
-index=index.html
+index=index.php
 
 
 

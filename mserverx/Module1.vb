@@ -154,24 +154,98 @@ Module module1
         End Sub
 
         ' Send HTTP Response
+        '  Private Sub sendHTMLResponse(ByVal httpRequest As String)
+        '   Try
+        ' Get the file content of HTTP Request 
+        '    Dim streamReader As StreamReader = New StreamReader(HttpRequest)
+        '   Dim strBuff As String = StreamReader.ReadToEnd()
+        '          streamReader.Close()
+        '          streamReader = Nothing
+
+        ' The content Length of HTTP Request
+
+        'Dim respByte() As Byte = Encoding.ASCII.GetBytes(strBuff)
+
+        ' Set HTML Header
+        '   Dim htmlHeader As String = _
+        '     "HTTP/1.0 200 OK" & ControlChars.CrLf & _
+        '      "Server: WebServer 1.0" & ControlChars.CrLf & _
+        '      "Content-Length: " & respByte.Length & ControlChars.CrLf & _
+        '      "Content-Type: " & getContentType(HttpRequest) & _
+        '      ControlChars.CrLf & ControlChars.CrLf
+
+        ' The content Length of HTML Header
+        '   Dim headerByte() As Byte = Encoding.ASCII.GetBytes(htmlHeader)
+        '
+        '    Console.WriteLine("HTML Header: " & ControlChars.CrLf & htmlHeader)
+
+        ' Send HTML Header back to Web Browser
+        '     clientSocket.Send(headerByte, 0, headerByte.Length, SocketFlags.None)
+
+        ' Send HTML Content back to Web Browser
+        '  clientSocket.Send(respByte, 0, respByte.Length, SocketFlags.None)
+        '
+        ' Close HTTP Socket connection
+        '   clientSocket.Shutdown(SocketShutdown.Both)
+        '  clientSocket.Close()
+        '
+        '  Catch ex As Exception
+        '    Console.WriteLine(ex.StackTrace.ToString())
+
+        '  If clientSocket.Connected Then
+        ' clientSocket.Close()
+        ' End If
+        ' End Try
+        '  End Sub
+
+        ' Get Content Type'
         Private Sub sendHTMLResponse(ByVal httpRequest As String)
             Try
+                Dim httpRequest2 As String = httpRequest
                 ' Get the file content of HTTP Request 
-                Dim streamReader As StreamReader = New StreamReader(httpRequest)
+                If httpRequest.EndsWith(".php") Then
+                    Dim txttmpLoc As String = Directory.GetCurrentDirectory() & "\tmp\phpcompiled.cache"
+                    ' httpRequest2 = txttmpLoc
+                    Try
+                        Dim prcProcess As New Process()
+                        prcProcess.StartInfo.FileName = "cmd.exe"
+                        prcProcess.StartInfo.UseShellExecute = False
+                        prcProcess.StartInfo.CreateNoWindow = True
+                        prcProcess.StartInfo.RedirectStandardOutput = True
+                        prcProcess.StartInfo.RedirectStandardInput = True
+                        prcProcess.StartInfo.RedirectStandardError = True
+                        prcProcess.Start()
+                        Dim swrInput As IO.StreamWriter = prcProcess.StandardInput
+                        swrInput.AutoFlush = True
+                        swrInput.Write("PHP\PHP-cgi -n -f " & httpRequest2 & ">" & txttmpLoc & System.Environment.NewLine)
+                        swrInput.Write("exit" & System.Environment.NewLine)
+                        prcProcess.WaitForExit()
+                        If Not prcProcess.HasExited Then
+                            prcProcess.Kill()
+                        End If
+                        swrInput.Flush()
+                        httpRequest2 = txttmpLoc
+                    Catch ex As Exception
+                        MsgBox(ex.Message)
+                    End Try
+                End If
+                Dim streamReader As StreamReader = New StreamReader(httpRequest2)
                 Dim strBuff As String = streamReader.ReadToEnd()
                 streamReader.Close()
                 streamReader = Nothing
+
+
 
                 ' The content Length of HTTP Request
                 Dim respByte() As Byte = Encoding.ASCII.GetBytes(strBuff)
 
                 ' Set HTML Header
                 Dim htmlHeader As String = _
-                    "HTTP/1.0 200 OK" & ControlChars.CrLf & _
-                    "Server: WebServer 1.0" & ControlChars.CrLf & _
-                    "Content-Length: " & respByte.Length & ControlChars.CrLf & _
-                    "Content-Type: " & getContentType(httpRequest) & _
-                    ControlChars.CrLf & ControlChars.CrLf
+                 "HTTP/1.0 200 OK" & ControlChars.CrLf & _
+                 "Server: WebServer 1.0" & ControlChars.CrLf & _
+                 "Content-Length: " & respByte.Length & ControlChars.CrLf & _
+                 "Content-Type: " & getContentType(httpRequest) & _
+                 ControlChars.CrLf & ControlChars.CrLf
 
                 ' The content Length of HTML Header
                 Dim headerByte() As Byte = Encoding.ASCII.GetBytes(htmlHeader)
@@ -196,8 +270,6 @@ Module module1
                 End If
             End Try
         End Sub
-
-        ' Get Content Type
         Private Function getContentType(ByVal httpRequest As String) As String
             If (httpRequest.EndsWith("html")) Then
                 Return "text/html"
@@ -221,6 +293,8 @@ Module module1
                 Return "application/vnd.ms-excel"
             ElseIf (httpRequest.EndsWith("ppt")) Then
                 Return "application/vnd.ms-powerpoint"
+            ElseIf (httpRequest.EndsWith("php")) Then
+                Return "text/html"
             Else
                 Return "text/plain"
             End If
